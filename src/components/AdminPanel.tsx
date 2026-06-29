@@ -35,6 +35,8 @@ interface AdminPanelProps {
   onUpdateAutomationUrl: (url: string) => void;
   notificationEmail: string;
   onUpdateNotificationEmail: (email: string) => void;
+  databaseStatus: 'local' | 'loading' | 'connected' | 'error';
+  isCentralDatabaseConfigured: boolean;
   onClose: () => void;
 }
 
@@ -51,6 +53,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onUpdateAutomationUrl,
   notificationEmail,
   onUpdateNotificationEmail,
+  databaseStatus,
+  isCentralDatabaseConfigured,
   onClose
 }) => {
   const [search, setSearch] = useState('');
@@ -164,6 +168,13 @@ function doPost(e) {
   const pendingCount = requests.filter(r => r.status === 'da_elaborare').length;
   const processingCount = requests.filter(r => r.status === 'in_lavorazione').length;
   const sentCount = requests.filter(r => r.status === 'inviato').length;
+  const databaseLabel = databaseStatus === 'connected'
+    ? 'Cloud Database'
+    : databaseStatus === 'loading'
+      ? 'Sync in corso'
+      : databaseStatus === 'error'
+        ? 'Fallback locale'
+        : 'Database locale';
 
   // Movie setting popularity stats
   const settingStats = MOVIE_SETTINGS.map(setting => {
@@ -284,7 +295,7 @@ function doPost(e) {
             <div className="flex items-center gap-2">
               <h1 className="text-xl uppercase tracking-wider font-semibold text-white">Pannello di Controllo</h1>
               <span className="text-[9px] font-mono font-semibold bg-white text-black px-2 py-0.5 uppercase">
-                Offline Database
+                {databaseLabel}
               </span>
             </div>
             <p className="text-xs text-white/40 mt-1 uppercase tracking-wider">
@@ -605,6 +616,28 @@ function doPost(e) {
 
         {/* COLONNA DESTRA: Opzioni e Statistiche Classifica (4/12) */}
         <div className="lg:col-span-4 flex flex-col gap-6">
+          <div className={`border p-4 rounded-none ${
+            databaseStatus === 'connected'
+              ? 'bg-emerald-500/5 border-emerald-500/20'
+              : databaseStatus === 'error'
+                ? 'bg-red-500/5 border-red-500/20'
+                : 'bg-white/5 border-white/10'
+          }`}>
+            <div className="flex items-center gap-2">
+              <Database className="w-4 h-4 text-white/70" />
+              <h3 className="text-xs uppercase tracking-widest font-bold text-white">Database richieste</h3>
+            </div>
+            <p className="text-[11px] text-white/50 leading-relaxed font-light mt-2">
+              {databaseStatus === 'connected' && 'Supabase è collegato: le richieste sono sincronizzate tra dispositivi.'}
+              {databaseStatus === 'loading' && 'Caricamento richieste dal database centralizzato in corso.'}
+              {databaseStatus === 'error' && 'Supabase non risponde: l’app continua a salvare in locale su questo dispositivo.'}
+              {databaseStatus === 'local' && (
+                isCentralDatabaseConfigured
+                  ? 'Database centralizzato configurato, in attesa di connessione.'
+                  : 'Supabase non è ancora configurato: per ora le richieste restano solo su questo dispositivo.'
+              )}
+            </p>
+          </div>
 
           {/* Box 1: Automazioni Mail e Database */}
           <div className="bg-white/5 border border-white/10 p-6 shadow-xl flex flex-col gap-4 rounded-none">

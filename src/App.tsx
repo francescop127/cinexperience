@@ -7,6 +7,15 @@ import { RegistrationForm } from './components/RegistrationForm';
 import { ConfirmationScreen } from './components/ConfirmationScreen';
 import { AdminPanel } from './components/AdminPanel';
 import { Camera, Settings, Lock, X, ShieldAlert, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  clearPhotoRequests,
+  createPhotoRequest,
+  deletePhotoRequest,
+  fetchPhotoRequests,
+  isSupabaseConfigured,
+  updatePhotoRequestNotes,
+  updatePhotoRequestStatus
+} from './lib/supabase';
 
 const defaultAutomationUrl = import.meta.env.VITE_AUTOMATION_URL || '';
 const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || '';
@@ -36,6 +45,9 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'select' | 'form' | 'success' | 'admin'>('select');
   const [latestEmail, setLatestEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [databaseStatus, setDatabaseStatus] = useState<'local' | 'loading' | 'connected' | 'error'>(
+    isSupabaseConfigured ? 'loading' : 'local'
+  );
   const settingsSliderRef = useRef<HTMLDivElement | null>(null);
 
   // Admin Security States
@@ -59,6 +71,28 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('cinexperience_notification_email', notificationEmail);
   }, [notificationEmail]);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    let isMounted = true;
+
+    fetchPhotoRequests()
+      .then((cloudRequests) => {
+        if (!isMounted) return;
+        setRequests(cloudRequests);
+        localStorage.setItem('photobooth_requests', JSON.stringify(cloudRequests));
+        setDatabaseStatus('connected');
+      })
+      .catch((err) => {
+        console.warn('Errore caricamento richieste Supabase:', err);
+        if (isMounted) setDatabaseStatus('error');
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Handle setting selection
   const handleSelectSetting = (setting: MovieSetting) => {
@@ -102,6 +136,16 @@ export default function App() {
     // Save locally
     setRequests((prev) => [newRequest, ...prev]);
     setLatestEmail(formData.email);
+
+    if (isSupabaseConfigured) {
+      try {
+        await createPhotoRequest(newRequest);
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore salvataggio richiesta Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
 
     if (automationUrl) {
       try {
@@ -153,27 +197,67 @@ export default function App() {
   };
 
   // Admin callbacks
-  const handleUpdateStatus = (id: string, status: ProcessingStatus) => {
+  const handleUpdateStatus = async (id: string, status: ProcessingStatus) => {
     setRequests((prev) =>
       prev.map((req) => (req.id === id ? { ...req, status } : req))
     );
+
+    if (isSupabaseConfigured) {
+      try {
+        await updatePhotoRequestStatus(id, status);
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore aggiornamento stato Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
   };
 
-  const handleUpdateNotes = (id: string, notes: string) => {
+  const handleUpdateNotes = async (id: string, notes: string) => {
     setRequests((prev) =>
       prev.map((req) => (req.id === id ? { ...req, notes } : req))
     );
+
+    if (isSupabaseConfigured) {
+      try {
+        await updatePhotoRequestNotes(id, notes);
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore aggiornamento note Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
   };
 
-  const handleDeleteRequest = (id: string) => {
+  const handleDeleteRequest = async (id: string) => {
     setRequests((prev) => prev.filter((req) => req.id !== id));
+
+    if (isSupabaseConfigured) {
+      try {
+        await deletePhotoRequest(id);
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore eliminazione richiesta Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
   };
 
-  const handleClearAllRequests = () => {
+  const handleClearAllRequests = async () => {
     setRequests([]);
+
+    if (isSupabaseConfigured) {
+      try {
+        await clearPhotoRequests();
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore svuotamento richieste Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
   };
 
-  const handleSeedMockData = () => {
+  const handleSeedMockData = async () => {
     const mockNames = [
       { f: 'Giulia', l: 'Bianchi', email: 'giulia.b@example.it' },
       { f: 'Marco', l: 'Neri', email: 'm.neri@esempio.com' },
@@ -205,6 +289,16 @@ export default function App() {
     });
 
     setRequests((prev) => [...seeded, ...prev]);
+
+    if (isSupabaseConfigured) {
+      try {
+        await Promise.all(seeded.map(createPhotoRequest));
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore generazione dati test Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
   };
 
   return (
@@ -389,6 +483,8 @@ export default function App() {
                 onUpdateAutomationUrl={setAutomationUrl}
                 notificationEmail={notificationEmail}
                 onUpdateNotificationEmail={setNotificationEmail}
+                databaseStatus={databaseStatus}
+                isCentralDatabaseConfigured={isSupabaseConfigured}
                 onClose={handleResetFlow}
               />
             </motion.div>

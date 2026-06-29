@@ -22,6 +22,21 @@ Passaggi:
 4. Distribuisci come `Applicazione web`, con accesso consentito a chiunque abbia il link.
 5. Incolla l'URL `/exec` nel pannello admin e imposta la mail destinataria.
 
+## Step 2: Database centralizzato Supabase
+
+Supabase permette di sincronizzare le richieste tra dispositivi. Se configurato, l'app carica, crea, aggiorna ed elimina richieste dalla tabella cloud `photo_requests`. Se Supabase non è configurato o non risponde, l'app continua a usare il salvataggio locale del browser.
+
+Passaggi:
+1. Crea un progetto Supabase.
+2. Apri `SQL Editor`.
+3. Incolla ed esegui il file `supabase/schema.sql`.
+4. Copia `Project URL` e `anon public key` da `Project Settings > API`.
+5. Aggiungi le variabili:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+
+Nota sicurezza: questa prima configurazione è pensata per uso operativo controllato durante evento. Per bloccare davvero lettura/modifica/eliminazione dietro login admin, il prossimo step sarà aggiungere Supabase Auth o una Edge Function server-side.
+
 ## Deploy GitHub Pages
 
 Il progetto include una GitHub Action per pubblicare automaticamente la build su GitHub Pages a ogni push su `main`.
@@ -31,3 +46,5 @@ Per preconfigurare tutti i dispositivi senza usare il pannello admin, aggiungi n
 - `Settings > Secrets and variables > Actions > Variables`
 - `VITE_AUTOMATION_URL`: URL `/exec` della Web App Apps Script
 - `VITE_NOTIFICATION_EMAIL`: email destinataria delle richieste
+- `VITE_SUPABASE_URL`: URL progetto Supabase
+- `VITE_SUPABASE_ANON_KEY`: anon public key Supabase
