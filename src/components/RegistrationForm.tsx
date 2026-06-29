@@ -4,7 +4,7 @@ import { Mail, User, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
 
 interface RegistrationFormProps {
   selectedSetting: MovieSetting;
-  onSubmit: (formData: { firstName: string; lastName: string; email: string }) => void;
+  onSubmit: (formData: { firstName: string; lastName: string; email: string; notes?: string }) => void;
   onBack: () => void;
   isSubmitting: boolean;
 }
@@ -18,6 +18,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [notes, setNotes] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -44,7 +45,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit({ firstName, lastName, email });
+      onSubmit({ firstName, lastName, email, notes: notes.trim() || undefined });
     }
   };
 
@@ -196,6 +197,21 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           )}
         </div>
 
+        {/* Note operative opzionali */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="notes" className="text-[10px] uppercase tracking-widest text-white/50 ml-1">
+            Note per lo scatto <span className="text-white/25">(opzionale)</span>
+          </label>
+          <textarea
+            id="notes"
+            rows={3}
+            placeholder="Es. posa preferita, accessori, indicazioni per il fotografo..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="block w-full bg-white/10 border-none px-4 py-3 focus:ring-1 focus:ring-white/40 outline-none placeholder:text-white/20 text-sm transition-all rounded-none resize-none text-white"
+          />
+        </div>
+
         {/* Privacy e Trattamento Dati in Box Sleek */}
         <div className={`p-4 border transition-all rounded-none ${
           errors.privacy 
@@ -265,4 +281,3 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
     </div>
   );
 };
-

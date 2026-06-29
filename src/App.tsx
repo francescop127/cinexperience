@@ -75,7 +75,7 @@ export default function App() {
   };
 
   // Handle request submission
-  const handleSubmitForm = async (formData: { firstName: string; lastName: string; email: string }) => {
+  const handleSubmitForm = async (formData: { firstName: string; lastName: string; email: string; notes?: string }) => {
     if (!selectedSetting) return;
     setIsSubmitting(true);
 
@@ -95,7 +95,8 @@ export default function App() {
         second: '2-digit'
       }),
       privacyAccepted: true,
-      status: 'da_elaborare'
+      status: 'da_elaborare',
+      notes: formData.notes
     };
 
     // Save locally

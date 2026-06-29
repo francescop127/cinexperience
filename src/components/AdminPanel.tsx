@@ -109,20 +109,27 @@ function doPost(e) {
     if (recipient) {
       const subject = "Nuova richiesta CINÉXPERIENCE - " + (data.settingTitle || "Scenario");
       const body = [
-        "Nuova richiesta ricevuta da CINÉXPERIENCE",
+        "NUOVA RICHIESTA CINÉXPERIENCE",
         "",
+        "DATI RICHIESTA",
         "ID richiesta: " + (data.id || ""),
+        "Data registrazione: " + (data.timestamp || ""),
+        "Stato: " + (data.status || "da_elaborare"),
+        "",
+        "DATI PARTECIPANTE",
         "Nome: " + (data.firstName || "") + " " + (data.lastName || ""),
         "Email partecipante: " + (data.email || ""),
+        "Consenso privacy: " + (data.privacyAccepted ? "SI" : "NO"),
+        "",
+        "SCENARIO DA REALIZZARE",
         "Scenario richiesto: " + (data.settingTitle || ""),
         "ID scenario: " + (data.settingId || ""),
         "Genere scenario: " + (data.settingGenre || ""),
         "Descrizione scenario: " + (data.settingDescription || ""),
         "Suggerimento posa: " + (data.settingPromptHint || ""),
-        "Data registrazione: " + (data.timestamp || ""),
-        "Consenso privacy: " + (data.privacyAccepted ? "SI" : "NO"),
-        "Stato: " + (data.status || "da_elaborare"),
-        "Note: " + (data.notes || "-")
+        "",
+        "NOTE OPERATIVE",
+        data.notes || "-"
       ].join("\\n");
 
       MailApp.sendEmail(recipient, subject, body);
