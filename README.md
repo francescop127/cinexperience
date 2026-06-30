@@ -65,7 +65,7 @@ Il progetto include una GitHub Action per pubblicare automaticamente la build su
 Per preconfigurare tutti i dispositivi senza usare il pannello admin, aggiungi nel repository GitHub:
 
 - `Settings > Secrets and variables > Actions > Variables`
-- `VITE_AUTOMATION_URL`: URL `/exec` della Web App Apps Script, default `https://script.google.com/macros/s/AKfycbyl-L7DiY7vy1K9vrGbI7rswuxTA8g4f_cMmoiPxKx8vZ8kJp-qz7RpnaWqEmpdf9I/exec`
+- `VITE_AUTOMATION_URL`: URL `/exec` della Web App Apps Script, default `https://script.google.com/macros/s/AKfycbzRKjgSdEX9ppVtZI7eqnN9vbaab8JCpAGyttHWoZVoOCiU8v1azI8lWuXA4il--kQ/exec`
 - `VITE_NOTIFICATION_EMAIL`: email destinataria delle richieste, default `cinexperience26@gmail.com`
 - `VITE_SUPABASE_URL`: URL progetto Supabase
 - `VITE_SUPABASE_ANON_KEY`: anon public key Supabase

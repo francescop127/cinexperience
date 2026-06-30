@@ -17,7 +17,7 @@ import {
   updatePhotoRequestStatus
 } from './lib/supabase';
 
-const defaultAutomationUrl = import.meta.env.VITE_AUTOMATION_URL || 'https://script.google.com/macros/s/AKfycbyl-L7DiY7vy1K9vrGbI7rswuxTA8g4f_cMmoiPxKx8vZ8kJp-qz7RpnaWqEmpdf9I/exec';
+const defaultAutomationUrl = import.meta.env.VITE_AUTOMATION_URL || 'https://script.google.com/macros/s/AKfycbzRKjgSdEX9ppVtZI7eqnN9vbaab8JCpAGyttHWoZVoOCiU8v1azI8lWuXA4il--kQ/exec';
 const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'cinexperience26@gmail.com';
 
 export default function App() {
