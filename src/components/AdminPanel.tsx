@@ -68,7 +68,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [testAutomationStatus, setTestAutomationStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [testAutomationMessage, setTestAutomationMessage] = useState('');
 
-  const automationScript = `const DEFAULT_NOTIFICATION_EMAIL = "";
+  const automationScript = `const DEFAULT_NOTIFICATION_EMAIL = "cinexperience26@gmail.com";
 
 function doPost(e) {
   try {

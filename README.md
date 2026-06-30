@@ -13,7 +13,7 @@ Applicazione React/Vite per un'esperienza photo booth cinematografica con green 
 
 ## Step 1: Mail riepilogativa
 
-Dal pannello admin puoi configurare una Web App Google Apps Script e una mail destinataria. Ogni nuova registrazione viene salvata in locale e inviata via email in formato leggibile con dati partecipante, scenario richiesto, descrizione creativa, suggerimento posa, consenso privacy e note operative.
+Dal pannello admin puoi configurare una Web App Google Apps Script e una mail destinataria. Ogni nuova registrazione viene salvata in locale e inviata via email in formato leggibile con dati partecipante, scenario richiesto, descrizione creativa, suggerimento posa, consenso privacy e note operative. La mail predefinita per la ricezione richieste è `cinexperience26@gmail.com`.
 
 Passaggi:
 1. Crea un Google Sheet.
@@ -66,6 +66,6 @@ Per preconfigurare tutti i dispositivi senza usare il pannello admin, aggiungi n
 
 - `Settings > Secrets and variables > Actions > Variables`
 - `VITE_AUTOMATION_URL`: URL `/exec` della Web App Apps Script
-- `VITE_NOTIFICATION_EMAIL`: email destinataria delle richieste
+- `VITE_NOTIFICATION_EMAIL`: email destinataria delle richieste, default `cinexperience26@gmail.com`
 - `VITE_SUPABASE_URL`: URL progetto Supabase
 - `VITE_SUPABASE_ANON_KEY`: anon public key Supabase

@@ -18,7 +18,7 @@ import {
 } from './lib/supabase';
 
 const defaultAutomationUrl = import.meta.env.VITE_AUTOMATION_URL || '';
-const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || '';
+const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'cinexperience26@gmail.com';
 
 export default function App() {
   // DB & Persistence States
