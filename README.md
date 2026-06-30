@@ -45,11 +45,16 @@ Variabili supportate:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
 
 Se usi l'integrazione Supabase di Vercel, l'app supporta anche questi nomi:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_PUBLISHABLE_KEY`
 
 Se dopo il redeploy il pannello admin mostra ancora `Database locale`, significa che la build pubblicata non sta ricevendo le variabili Supabase oppure che i nomi non corrispondono esattamente.
 
