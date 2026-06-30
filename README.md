@@ -37,6 +37,22 @@ Passaggi:
 
 Nota sicurezza: questa prima configurazione è pensata per uso operativo controllato durante evento. Per bloccare davvero lettura/modifica/eliminazione dietro login admin, il prossimo step sarà aggiungere Supabase Auth o una Edge Function server-side.
 
+## Deploy Vercel con Supabase
+
+Su Vercel le variabili devono essere presenti prima della build. Apri `Project Settings > Environment Variables`, aggiungi le variabili per `Production` e poi fai `Redeploy` dell'ultimo deployment.
+
+Variabili supportate:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+Se usi l'integrazione Supabase di Vercel, l'app supporta anche questi nomi:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+Se dopo il redeploy il pannello admin mostra ancora `Database locale`, significa che la build pubblicata non sta ricevendo le variabili Supabase oppure che i nomi non corrispondono esattamente.
+
 ## Deploy GitHub Pages
 
 Il progetto include una GitHub Action per pubblicare automaticamente la build su GitHub Pages a ogni push su `main`.
