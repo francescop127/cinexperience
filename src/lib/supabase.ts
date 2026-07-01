@@ -196,9 +196,16 @@ export const replaceMovieSettings = async (settings: MovieSetting[]): Promise<vo
     sort_order: index
   }));
 
+  const { error: deleteError } = await supabase
+    .from('movie_settings')
+    .delete()
+    .neq('id', '');
+
+  if (deleteError) throw deleteError;
+
   const { error } = await supabase
     .from('movie_settings')
-    .upsert(rows, { onConflict: 'id' });
+    .insert(rows);
 
   if (error) throw error;
 };

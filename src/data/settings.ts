@@ -1,58 +1,150 @@
 import { MovieSetting } from '../types';
 
+export const MOVIE_SETTINGS_VERSION = 'cover-catalog-2026-07-01';
+
 export const MOVIE_SETTINGS: MovieSetting[] = [
   {
-    id: 'cyberpunk',
-    title: 'Cyberpunk Neon City',
+    id: 'lo-squalo',
+    title: 'LO SQUALO',
+    genre: 'Thriller / Avventura',
+    description: 'Una spiaggia inquieta, acqua bassa e tensione cinematografica da grande classico.',
+    imageUrl: '/IMG COVER/LO SQUALO.png',
+    overlayLabel: 'LO SQUALO',
+    promptHint: 'Sguardo allarmato verso l’acqua, posa pronta a scappare o a dare l’allarme.'
+  },
+  {
+    id: 'ghostbusters',
+    title: 'GHOSTBUSTERS',
+    genre: 'Commedia / Fantastico',
+    description: 'Una biblioteca infestata, energia paranormale e atmosfera da squadra acchiappafantasmi.',
+    imageUrl: '/IMG COVER/GHOSTBUSTERS.png',
+    overlayLabel: 'GHOSTBUSTERS',
+    promptHint: 'Impugna idealmente un rilevatore o uno zaino protonico, con espressione concentrata.'
+  },
+  {
+    id: 'jumanji',
+    title: 'JUMANJI',
+    genre: 'Avventura / Fantasy',
+    description: 'Una giungla selvaggia prende vita tra piante, radici e animali in arrivo.',
+    imageUrl: '/IMG COVER/JUMANJI.png',
+    overlayLabel: 'JUMANJI',
+    promptHint: 'Posa da esploratore, come se avessi appena sentito un rumore tra gli alberi.'
+  },
+  {
+    id: 'colazione-da-tiffany',
+    title: 'COLAZIONE DA TIFFANY',
+    genre: 'Romantico / Classico',
+    description: 'Eleganza senza tempo, luci soffuse e atmosfera sofisticata da cinema classico.',
+    imageUrl: '/IMG COVER/COLAZIONE DA TIFFANY.png',
+    overlayLabel: 'COLAZIONE DA TIFFANY',
+    promptHint: 'Posa elegante e leggera, sguardo da diva o divo davanti alla vetrina.'
+  },
+  {
+    id: 'matrix',
+    title: 'MATRIX',
     genre: 'Fantascienza / Cyberpunk',
-    description: 'Immergiti tra i grattacieli futuristici, pioggia sottile e neon viola di una megalopoli del 2099.',
-    imageUrl: 'https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?q=80&w=800&auto=format&fit=crop',
-    overlayLabel: 'NEON DISTRICT',
-    promptHint: 'Abito futuristico o giacca in pelle nera lucida, luci neon ciano e magenta riflesse.'
+    description: 'Codici verdi, realtà simulata e stile action futuristico.',
+    imageUrl: '/IMG COVER/MATRIX.png',
+    overlayLabel: 'MATRIX',
+    promptHint: 'Occhiali immaginari, braccia ferme e postura da eroe pronto a piegare la realtà.'
   },
   {
-    id: 'space_odyssey',
-    title: 'Odissea nello Spazio',
-    genre: 'Fantascienza / Space Opera',
-    description: 'Il ponte di comando di un incrociatore stellare che osserva un buco nero rotante supermassiccio.',
-    imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop',
-    overlayLabel: 'DEEP SPACE',
-    promptHint: 'Tuta spaziale o uniforme da ufficiale di bordo, stelle e nebulose cosmiche sullo sfondo.'
+    id: 'jurassic-park',
+    title: 'JURASSIC PARK',
+    genre: 'Avventura / Fantascienza',
+    description: 'Pioggia tropicale, dinosauri in agguato e meraviglia preistorica fuori controllo.',
+    imageUrl: '/IMG COVER/JURASSIC PARK.png',
+    overlayLabel: 'JURASSIC PARK',
+    promptHint: 'Sguardo sorpreso verso l’alto o passo indietro davanti a qualcosa di enorme.'
   },
   {
-    id: 'fantasy_forest',
-    title: 'Regno di Eldoria',
-    genre: 'Epic Fantasy',
-    description: 'Un bosco fatato eterno con funghi luminescenti, cascate d\'acqua azzurra e rovine di un antico tempio.',
-    imageUrl: 'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?q=80&w=800&auto=format&fit=crop',
-    overlayLabel: 'FORESTA INCANTATA',
-    promptHint: 'Mantello regale o abiti medievali, circondato da polvere magica dorata e foglie scintillanti.'
+    id: 'shining',
+    title: 'SHINING',
+    genre: 'Horror / Psicologico',
+    description: 'Corridoi d’albergo, luci calde e tensione sospesa da incubo.',
+    imageUrl: '/IMG COVER/SHINING.png',
+    overlayLabel: 'SHINING',
+    promptHint: 'Rimani immobile al centro, con espressione seria e leggermente inquieta.'
   },
   {
-    id: 'vintage_noir',
-    title: 'Milano Noir 1948',
-    genre: 'Giallo / Vintage Noir',
-    description: 'Un ufficio investigativo fumoso con ombre a veneziana, detective con cappello e fari d\'auto nella nebbia.',
-    imageUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop',
-    overlayLabel: 'UFFICIO DEL DETECTIVE',
-    promptHint: 'Cappotto e cappello fedora stile anni 40, fumo leggero d\'atmosfera, filtro in bianco e nero drammatico.'
+    id: 'blade-runner',
+    title: 'BLADE RUNNER',
+    genre: 'Fantascienza / Noir',
+    description: 'Metropoli notturna, pioggia, neon e atmosfera investigativa futuristica.',
+    imageUrl: '/IMG COVER/BLADE RUNNER.png',
+    overlayLabel: 'BLADE RUNNER',
+    promptHint: 'Posa intensa da detective sotto la pioggia, mani in tasca e sguardo laterale.'
   },
   {
-    id: 'western_sunset',
-    title: 'Canyon del Redentore',
-    genre: 'Western / Avventura',
-    description: 'Il deserto rosso dell\'Arizona al tramonto con cactus imponenti, polvere dorata e montagne maestose.',
-    imageUrl: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=800&auto=format&fit=crop',
-    overlayLabel: 'FRONTiera SELVAGGIA',
-    promptHint: 'Cappello da cowboy, bandoliera, atmosfera calda e polverosa color ocra e arancione tramonto.'
+    id: 'ritorno-al-futuro',
+    title: 'RITORNO AL FUTURO',
+    genre: 'Avventura / Fantascienza',
+    description: 'Fulmini, viaggi nel tempo e pura energia anni Ottanta.',
+    imageUrl: '/IMG COVER/RITORNO AL FUTURO.png',
+    overlayLabel: 'RITORNO AL FUTURO',
+    promptHint: 'Pugno stretto o posa sorpresa, come se il tempo stesse cambiando intorno a te.'
   },
   {
-    id: 'action_apocalypse',
-    title: 'Day After Tomorrow',
-    genre: 'Azione / Post-Apocalittico',
-    description: 'Scenario urbano catastrofico con cielo tempestoso, elicotteri in sorvolo e nuvole di fumo cinematico.',
-    imageUrl: 'https://images.unsplash.com/photo-1447069387593-a5de0862481e?q=80&w=800&auto=format&fit=crop',
-    overlayLabel: 'ZONA DI CONTROLLO',
-    promptHint: 'Gilet tattico militare, occhiali scuri, scintille di detriti e fumo di fiamme dorate ai lati.'
+    id: 'a-qualcuno-piace-caldo',
+    title: 'A QUALCUNO PIACE CALDO',
+    genre: 'Commedia / Musical',
+    description: 'Palco jazz, bianco e nero, microfono vintage e fascino da grande show.',
+    imageUrl: '/IMG COVER/A QUALCUNO PIACE CALDO.png',
+    overlayLabel: 'A QUALCUNO PIACE CALDO',
+    promptHint: 'Posa da cantante jazz al microfono, sorridente e teatrale.'
+  },
+  {
+    id: 'il-grande-lebowski',
+    title: 'IL GRANDE LEBOWSKI',
+    genre: 'Commedia / Cult',
+    description: 'Bowling, luci retrò e rilassatezza da cult movie.',
+    imageUrl: '/IMG COVER/IL GRANDE LEBOWSKI.png',
+    overlayLabel: 'IL GRANDE LEBOWSKI',
+    promptHint: 'Atteggiamento rilassato, mani in tasca o posa da lancio al bowling.'
+  },
+  {
+    id: 'alien',
+    title: 'ALIEN',
+    genre: 'Fantascienza / Horror',
+    description: 'Corridoi industriali, fumo, luci fredde e una presenza aliena nell’ombra.',
+    imageUrl: '/IMG COVER/ALIEN.png',
+    overlayLabel: 'ALIEN',
+    promptHint: 'Guardati alle spalle, come se qualcosa si muovesse nel buio.'
+  },
+  {
+    id: 'rocky',
+    title: 'ROCKY',
+    genre: 'Sport / Drammatico',
+    description: 'Alba, città e una posa vittoriosa da allenamento leggendario.',
+    imageUrl: '/IMG COVER/ROCKY.png',
+    overlayLabel: 'ROCKY',
+    promptHint: 'Braccia alzate in segno di vittoria, energia da campione.'
+  },
+  {
+    id: 'cera-una-volta-in-america',
+    title: "C'ERA UNA VOLTA IN AMERICA",
+    genre: 'Crime / Drammatico',
+    description: 'Strada notturna, pioggia, taxi gialli e cinema metropolitano d’autore.',
+    imageUrl: "/IMG COVER/C'ERA UNA VOLTA IN AMERICA.png",
+    overlayLabel: "C'ERA UNA VOLTA IN AMERICA",
+    promptHint: 'Rimani fermo al centro strada, serio, con sguardo profondo da scena finale.'
+  },
+  {
+    id: 'mamma-ho-perso-laereo',
+    title: "MAMMA HO PERSO L'AEREO",
+    genre: 'Commedia / Natale',
+    description: 'Casa addobbata, luci natalizie e atmosfera da commedia delle feste.',
+    imageUrl: "/IMG COVER/MAMMA HO PERSO L'AEREO.png",
+    overlayLabel: "MAMMA HO PERSO L'AEREO",
+    promptHint: 'Sorriso furbo o espressione sorpresa, come se avessi appena preparato una trappola.'
+  },
+  {
+    id: 'taxi-driver',
+    title: 'TAXI DRIVER',
+    genre: 'Drammatico / Noir Urbano',
+    description: 'New York notturna, insegne al neon, pioggia e atmosfera urbana ruvida.',
+    imageUrl: '/IMG COVER/TAXI DRIVER.png',
+    overlayLabel: 'TAXI DRIVER',
+    promptHint: 'Postura frontale, seria e silenziosa, con sguardo diretto in camera.'
   }
 ];

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MOVIE_SETTINGS } from './data/settings';
+import { MOVIE_SETTINGS, MOVIE_SETTINGS_VERSION } from './data/settings';
 import { MovieSetting, PhotoRequest, ProcessingStatus } from './types';
 import { SettingCard } from './components/SettingCard';
 import { RegistrationForm } from './components/RegistrationForm';
@@ -22,12 +22,18 @@ import {
 
 const defaultAutomationUrl = import.meta.env.VITE_AUTOMATION_URL || 'https://script.google.com/macros/s/AKfycbzRKjgSdEX9ppVtZI7eqnN9vbaab8JCpAGyttHWoZVoOCiU8v1azI8lWuXA4il--kQ/exec';
 const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'cinexperience26@gmail.com';
+const defaultSettingIds = new Set(MOVIE_SETTINGS.map((setting) => setting.id));
+
+const hasCurrentDefaultCatalog = (settings: MovieSetting[]) => {
+  return settings.length === MOVIE_SETTINGS.length && settings.every((setting) => defaultSettingIds.has(setting.id));
+};
 
 export default function App() {
   // DB & Persistence States
   const [settings, setSettings] = useState<MovieSetting[]>(() => {
+    const savedVersion = localStorage.getItem('cinexperience_movie_settings_version');
     const saved = localStorage.getItem('cinexperience_movie_settings');
-    return saved ? JSON.parse(saved) : MOVIE_SETTINGS;
+    return saved && savedVersion === MOVIE_SETTINGS_VERSION ? JSON.parse(saved) : MOVIE_SETTINGS;
   });
 
   const [requests, setRequests] = useState<PhotoRequest[]>(() => {
@@ -66,6 +72,7 @@ export default function App() {
   // Persist settings whenever they change
   useEffect(() => {
     localStorage.setItem('cinexperience_movie_settings', JSON.stringify(settings));
+    localStorage.setItem('cinexperience_movie_settings_version', MOVIE_SETTINGS_VERSION);
   }, [settings]);
 
   useEffect(() => {
@@ -105,9 +112,10 @@ export default function App() {
       .then(async (cloudSettings) => {
         if (!isMounted) return;
 
-        if (cloudSettings.length > 0) {
+        if (cloudSettings.length > 0 && hasCurrentDefaultCatalog(cloudSettings)) {
           setSettings(cloudSettings);
           localStorage.setItem('cinexperience_movie_settings', JSON.stringify(cloudSettings));
+          localStorage.setItem('cinexperience_movie_settings_version', MOVIE_SETTINGS_VERSION);
           setDatabaseStatus('connected');
           return;
         }
@@ -116,6 +124,7 @@ export default function App() {
         if (!isMounted) return;
         setSettings(MOVIE_SETTINGS);
         localStorage.setItem('cinexperience_movie_settings', JSON.stringify(MOVIE_SETTINGS));
+        localStorage.setItem('cinexperience_movie_settings_version', MOVIE_SETTINGS_VERSION);
         setDatabaseStatus('connected');
       })
       .catch((err) => {
