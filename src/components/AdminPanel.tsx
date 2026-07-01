@@ -537,6 +537,7 @@ function doPost(e) {
                   <thead>
                     <tr className="border-b border-white/10 bg-white/5 text-[9px] font-mono tracking-widest text-white/40 uppercase">
                       <th className="py-4 px-5 font-semibold">Utente / Email</th>
+                      <th className="py-4 px-4 font-semibold">Profilo Instagram</th>
                       <th className="py-4 px-4 font-semibold">Scenario Scelto</th>
                       <th className="py-4 px-4 font-semibold">Stato Lavorazione</th>
                       <th className="py-4 px-4 font-semibold">Note operative</th>
@@ -553,12 +554,20 @@ function doPost(e) {
                             <span>{req.lastName} {req.firstName}</span>
                           </div>
                           <span className="text-white/40 font-mono text-[11px] block mt-0.5">{req.email}</span>
-                          {req.instagramHandle && (
-                            <span className="text-white/45 font-mono text-[11px] block mt-0.5">{req.instagramHandle}</span>
-                          )}
                           <span className="text-[10px] text-white/30 block mt-1 font-mono">
                             {req.timestamp}
                           </span>
+                        </td>
+
+                        {/* Instagram */}
+                        <td className="py-4 px-4">
+                          {req.instagramHandle ? (
+                            <span className="font-mono text-[11px] text-white/75 bg-white/5 border border-white/10 px-2 py-1 inline-block">
+                              {req.instagramHandle}
+                            </span>
+                          ) : (
+                            <span className="text-white/25 font-mono text-[11px]">-</span>
+                          )}
                         </td>
 
                         {/* Scenario */}
