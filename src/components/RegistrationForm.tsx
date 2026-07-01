@@ -35,7 +35,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
     }
     
     if (!privacyAccepted) {
-      tempErrors.privacy = 'Devi accettare l\'informativa sulla privacy per procedere';
+      tempErrors.privacy = 'Devi accettare privacy e autorizzazione social per procedere';
     }
 
     setErrors(tempErrors);
@@ -235,10 +235,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
             </div>
             <div className="text-[11px] leading-relaxed text-white/60">
               <label htmlFor="privacy" className="font-semibold text-white/90 cursor-pointer select-none uppercase tracking-wider text-[10px]">
-                Informativa sulla Privacy <span className="text-white/40">*</span>
+                Privacy e autorizzazione social <span className="text-white/40">*</span>
               </label>
               <p className="text-white/50 mt-1 leading-relaxed font-light">
-                Acconsento al trattamento dei miei dati personali per l'elaborazione dell'immagine composita in green screen e l'invio del file digitale completato via email ai sensi del GDPR. I dati non saranno ceduti a terzi.
+                Acconsento al trattamento dei miei dati personali per l'elaborazione dell'immagine composita in green screen e l'invio del file digitale completato via email ai sensi del GDPR. Autorizzo inoltre la diffusione e distribuzione del contenuto sui canali social dell'evento, inclusa la possibilita di taggarmi e inserirlo come post in collaborazione. I dati non saranno ceduti a terzi.
               </p>
             </div>
           </div>

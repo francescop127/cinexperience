@@ -102,7 +102,7 @@ function doPost(e) {
         "Descrizione scenario",
         "Suggerimento posa",
         "Data registrazione",
-        "Consenso privacy",
+        "Consenso privacy e social",
         "Stato",
         "Note"
       ]);
@@ -138,7 +138,7 @@ function doPost(e) {
         "DATI PARTECIPANTE",
         "Nome: " + (data.firstName || "") + " " + (data.lastName || ""),
         "Email partecipante: " + (data.email || ""),
-        "Consenso privacy: " + (data.privacyAccepted ? "SI" : "NO"),
+        "Consenso privacy e social: " + (data.privacyAccepted ? "SI" : "NO"),
         "",
         "SCENARIO DA REALIZZARE",
         "Scenario richiesto: " + (data.settingTitle || ""),
@@ -203,7 +203,7 @@ function doPost(e) {
     if (requests.length === 0) return;
     
     // Header
-    const headers = ['ID', 'Nome', 'Cognome', 'Email', 'Scenario', 'Data Registrazione', 'Consenso Privacy', 'Stato Lavorazione', 'Note'];
+    const headers = ['ID', 'Nome', 'Cognome', 'Email', 'Scenario', 'Data Registrazione', 'Consenso Privacy e Social', 'Stato Lavorazione', 'Note'];
     
     // Rows
     const rows = requests.map(r => [
