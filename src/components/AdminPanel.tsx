@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { PhotoRequest, ProcessingStatus, MovieSetting } from '../types';
-import { MOVIE_SETTINGS } from '../data/settings';
 import { 
   Users, 
   Search, 
@@ -19,7 +18,13 @@ import {
   Sparkles, 
   Check, 
   Settings2,
-  AlertTriangle
+  AlertTriangle,
+  Image,
+  Pencil,
+  RotateCcw,
+  Save,
+  Upload,
+  X
 } from 'lucide-react';
 
 interface AdminPanelProps {
@@ -29,6 +34,9 @@ interface AdminPanelProps {
   onDeleteRequest: (id: string) => void;
   onClearAllRequests: () => void;
   onSeedMockData: () => void;
+  settings: MovieSetting[];
+  onUpdateSetting: (setting: MovieSetting) => void;
+  onResetSettings: () => void;
   autoResetTime: number;
   onUpdateAutoResetTime: (time: number) => void;
   automationUrl: string;
@@ -47,6 +55,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onDeleteRequest,
   onClearAllRequests,
   onSeedMockData,
+  settings,
+  onUpdateSetting,
+  onResetSettings,
   autoResetTime,
   onUpdateAutoResetTime,
   automationUrl,
@@ -67,6 +78,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [copiedScript, setCopiedScript] = useState(false);
   const [testAutomationStatus, setTestAutomationStatus] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
   const [testAutomationMessage, setTestAutomationMessage] = useState('');
+  const [editingSettingId, setEditingSettingId] = useState<string | null>(null);
+  const [settingDraft, setSettingDraft] = useState<MovieSetting | null>(null);
+  const [showResetSettingsConfirm, setShowResetSettingsConfirm] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState('');
 
   const automationScript = `const DEFAULT_NOTIFICATION_EMAIL = "cinexperience26@gmail.com";
 
@@ -177,7 +192,7 @@ function doPost(e) {
         : 'Database locale';
 
   // Movie setting popularity stats
-  const settingStats = MOVIE_SETTINGS.map(setting => {
+  const settingStats = settings.map(setting => {
     const count = requests.filter(r => r.settingId === setting.id).length;
     const percentage = totalRequests > 0 ? Math.round((count / totalRequests) * 100) : 0;
     return { ...setting, count, percentage };
@@ -232,6 +247,76 @@ function doPost(e) {
   const saveNotes = (id: string) => {
     onUpdateNotes(id, tempNotes);
     setEditingNotesId(null);
+  };
+
+  const startEditingSetting = (setting: MovieSetting) => {
+    setEditingSettingId(setting.id);
+    setSettingDraft({ ...setting });
+  };
+
+  const cancelEditingSetting = () => {
+    setEditingSettingId(null);
+    setSettingDraft(null);
+  };
+
+  const updateSettingDraft = (field: keyof MovieSetting, value: string) => {
+    setSettingDraft((current) => current ? { ...current, [field]: value } : current);
+  };
+
+  const resizeImageFile = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const img = new window.Image();
+
+        img.onload = () => {
+          const maxSize = 1400;
+          const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+
+          const context = canvas.getContext('2d');
+          if (!context) {
+            reject(new Error('Impossibile preparare l’immagine.'));
+            return;
+          }
+
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+
+        img.onerror = () => reject(new Error('File immagine non leggibile.'));
+        img.src = String(reader.result || '');
+      };
+
+      reader.onerror = () => reject(new Error('Caricamento immagine non riuscito.'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleSettingImageUpload = async (file: File | undefined) => {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setImageUploadError('Seleziona un file immagine valido.');
+      return;
+    }
+
+    try {
+      setImageUploadError('');
+      const imageUrl = await resizeImageFile(file);
+      updateSettingDraft('imageUrl', imageUrl);
+    } catch (err: any) {
+      setImageUploadError(err.message || 'Caricamento immagine non riuscito.');
+    }
+  };
+
+  const saveSettingDraft = () => {
+    if (!settingDraft) return;
+    onUpdateSetting(settingDraft);
+    cancelEditingSetting();
   };
 
   const copyAutomationScript = async () => {
@@ -405,7 +490,7 @@ function doPost(e) {
                   className="bg-transparent text-xs text-white/80 focus:outline-none cursor-pointer uppercase tracking-wider font-semibold"
                 >
                   <option value="all" className="bg-[#0F1012] text-white">Tutti gli scenari</option>
-                  {MOVIE_SETTINGS.map(s => (
+                  {settings.map(s => (
                     <option key={s.id} value={s.id} className="bg-[#0F1012] text-white">{s.title}</option>
                   ))}
                 </select>
@@ -759,7 +844,194 @@ function doPost(e) {
             </div>
           </div>
 
-          {/* Box 3: Classifica Popolarità Film / Scenari */}
+          {/* Box 3: Editor Scenari */}
+          <div className="bg-white/5 border border-white/10 p-6 shadow-xl flex flex-col gap-4 rounded-none">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Image className="w-4 h-4 text-white/80" />
+                <h3 className="text-xs uppercase tracking-widest font-bold text-white">Schede scenari</h3>
+              </div>
+
+              {showResetSettingsConfirm ? (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onResetSettings();
+                      setShowResetSettingsConfirm(false);
+                      cancelEditingSetting();
+                    }}
+                    className="px-2 py-1 bg-red-600 hover:bg-red-500 text-[9px] text-white font-bold uppercase tracking-wider rounded-none cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowResetSettingsConfirm(false)}
+                    className="p-1.5 border border-white/10 hover:bg-white/10 text-white/70 rounded-none cursor-pointer"
+                    title="Annulla reset"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setShowResetSettingsConfirm(true)}
+                  className="p-1.5 border border-white/10 hover:border-red-500/30 hover:bg-red-500/10 text-white/50 hover:text-red-300 rounded-none cursor-pointer"
+                  title="Ripristina scenari predefiniti"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <p className="text-[11px] text-white/50 leading-relaxed font-light">
+              Modifica testi e immagine delle schede. Se Supabase è collegato, le modifiche vengono salvate nel database centralizzato.
+            </p>
+
+            <div className="flex flex-col gap-3">
+              {settings.map((setting) => {
+                const isEditing = editingSettingId === setting.id && settingDraft;
+                const draft = isEditing ? settingDraft : setting;
+
+                return (
+                  <div key={setting.id} className="border border-white/10 bg-black/20 rounded-none overflow-hidden">
+                    <div className="flex gap-3 p-3">
+                      <div className="w-20 h-20 bg-white/5 border border-white/10 shrink-0 overflow-hidden">
+                        <img
+                          src={draft.imageUrl}
+                          alt={draft.title}
+                          referrerPolicy="no-referrer"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        {isEditing ? (
+                          <div className="flex flex-col gap-2">
+                            <input
+                              type="text"
+                              value={draft.title}
+                              onChange={(e) => updateSettingDraft('title', e.target.value)}
+                              placeholder="Titolo scenario"
+                              className="w-full bg-white/5 border border-white/10 px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30 rounded-none"
+                            />
+                            <input
+                              type="text"
+                              value={draft.genre}
+                              onChange={(e) => updateSettingDraft('genre', e.target.value)}
+                              placeholder="Genere"
+                              className="w-full bg-white/5 border border-white/10 px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30 rounded-none"
+                            />
+                            <input
+                              type="text"
+                              value={draft.overlayLabel}
+                              onChange={(e) => updateSettingDraft('overlayLabel', e.target.value)}
+                              placeholder="Etichetta immagine"
+                              className="w-full bg-white/5 border border-white/10 px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30 rounded-none"
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-white truncate">
+                              {setting.title}
+                            </h4>
+                            <p className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5 truncate">
+                              {setting.genre}
+                            </p>
+                            <p className="text-[10px] text-white/45 leading-relaxed mt-2 line-clamp-2">
+                              {setting.description}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col gap-1.5 shrink-0">
+                        {isEditing ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={saveSettingDraft}
+                              className="p-2 bg-white text-black hover:bg-white/90 rounded-none cursor-pointer"
+                              title="Salva scenario"
+                            >
+                              <Save className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={cancelEditingSetting}
+                              className="p-2 border border-white/10 hover:bg-white/10 text-white/70 rounded-none cursor-pointer"
+                              title="Annulla modifica"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => startEditingSetting(setting)}
+                            className="p-2 border border-white/10 hover:border-white/25 hover:bg-white/10 text-white/60 hover:text-white rounded-none cursor-pointer"
+                            title="Modifica scenario"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {isEditing && (
+                      <div className="border-t border-white/10 p-3 flex flex-col gap-2">
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <input
+                            type="text"
+                            value={draft.imageUrl}
+                            onChange={(e) => updateSettingDraft('imageUrl', e.target.value)}
+                            placeholder="URL immagine o immagine caricata"
+                            className="w-full bg-white/5 border border-white/10 px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30 font-mono rounded-none"
+                          />
+                          <label className="shrink-0 py-2 px-3 border border-white/10 hover:border-white/25 hover:bg-white/10 text-[10px] text-white font-bold uppercase tracking-wider rounded-none flex items-center justify-center gap-1.5 cursor-pointer transition-all">
+                            <Upload className="w-3.5 h-3.5" />
+                            <span>Carica immagine</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                handleSettingImageUpload(e.target.files?.[0]);
+                                e.target.value = '';
+                              }}
+                            />
+                          </label>
+                        </div>
+                        {imageUploadError && (
+                          <p className="text-[10px] text-red-400 uppercase tracking-wider">
+                            {imageUploadError}
+                          </p>
+                        )}
+                        <textarea
+                          value={draft.description}
+                          onChange={(e) => updateSettingDraft('description', e.target.value)}
+                          placeholder="Descrizione scenario"
+                          rows={3}
+                          className="w-full bg-white/5 border border-white/10 px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30 rounded-none resize-none"
+                        />
+                        <textarea
+                          value={draft.promptHint}
+                          onChange={(e) => updateSettingDraft('promptHint', e.target.value)}
+                          placeholder="Suggerimento posa"
+                          rows={2}
+                          className="w-full bg-white/5 border border-white/10 px-2.5 py-2 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30 rounded-none resize-none"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Box 4: Classifica Popolarità Film / Scenari */}
           <div className="bg-white/5 border border-white/10 p-6 shadow-xl flex flex-col gap-4 rounded-none">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-white/80" />

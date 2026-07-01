@@ -26,6 +26,8 @@ Passaggi:
 
 Supabase permette di sincronizzare le richieste tra dispositivi. Se configurato, l'app carica, crea, aggiorna ed elimina richieste dalla tabella cloud `photo_requests`. Se Supabase non è configurato o non risponde, l'app continua a usare il salvataggio locale del browser.
 
+Il pannello admin permette anche di modificare le schede degli scenari, inclusi testi e URL immagine. Con Supabase configurato, le modifiche vengono salvate nella tabella `movie_settings`; senza Supabase restano salvate nel browser locale.
+
 Passaggi:
 1. Crea un progetto Supabase.
 2. Apri `SQL Editor`.

@@ -11,8 +11,11 @@ import {
   clearPhotoRequests,
   createPhotoRequest,
   deletePhotoRequest,
+  fetchMovieSettings,
   fetchPhotoRequests,
   isSupabaseConfigured,
+  replaceMovieSettings,
+  upsertMovieSetting,
   updatePhotoRequestNotes,
   updatePhotoRequestStatus
 } from './lib/supabase';
@@ -22,6 +25,11 @@ const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'cin
 
 export default function App() {
   // DB & Persistence States
+  const [settings, setSettings] = useState<MovieSetting[]>(() => {
+    const saved = localStorage.getItem('cinexperience_movie_settings');
+    return saved ? JSON.parse(saved) : MOVIE_SETTINGS;
+  });
+
   const [requests, setRequests] = useState<PhotoRequest[]>(() => {
     const saved = localStorage.getItem('photobooth_requests');
     return saved ? JSON.parse(saved) : [];
@@ -57,6 +65,10 @@ export default function App() {
 
   // Persist settings whenever they change
   useEffect(() => {
+    localStorage.setItem('cinexperience_movie_settings', JSON.stringify(settings));
+  }, [settings]);
+
+  useEffect(() => {
     localStorage.setItem('photobooth_requests', JSON.stringify(requests));
   }, [requests]);
 
@@ -86,6 +98,28 @@ export default function App() {
       })
       .catch((err) => {
         console.warn('Errore caricamento richieste Supabase:', err);
+        if (isMounted) setDatabaseStatus('error');
+      });
+
+    fetchMovieSettings()
+      .then(async (cloudSettings) => {
+        if (!isMounted) return;
+
+        if (cloudSettings.length > 0) {
+          setSettings(cloudSettings);
+          localStorage.setItem('cinexperience_movie_settings', JSON.stringify(cloudSettings));
+          setDatabaseStatus('connected');
+          return;
+        }
+
+        await replaceMovieSettings(MOVIE_SETTINGS);
+        if (!isMounted) return;
+        setSettings(MOVIE_SETTINGS);
+        localStorage.setItem('cinexperience_movie_settings', JSON.stringify(MOVIE_SETTINGS));
+        setDatabaseStatus('connected');
+      })
+      .catch((err) => {
+        console.warn('Errore caricamento scenari Supabase:', err);
         if (isMounted) setDatabaseStatus('error');
       });
 
@@ -257,6 +291,43 @@ export default function App() {
     }
   };
 
+  const handleUpdateSetting = async (updatedSetting: MovieSetting) => {
+    setSettings((prev) =>
+      prev.map((setting) => (setting.id === updatedSetting.id ? updatedSetting : setting))
+    );
+
+    setSelectedSetting((prev) =>
+      prev?.id === updatedSetting.id ? updatedSetting : prev
+    );
+
+    if (isSupabaseConfigured) {
+      try {
+        await upsertMovieSetting(updatedSetting);
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore aggiornamento scenario Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
+  };
+
+  const handleResetSettings = async () => {
+    setSettings(MOVIE_SETTINGS);
+    setSelectedSetting((prev) =>
+      prev ? MOVIE_SETTINGS.find((setting) => setting.id === prev.id) || null : prev
+    );
+
+    if (isSupabaseConfigured) {
+      try {
+        await replaceMovieSettings(MOVIE_SETTINGS);
+        setDatabaseStatus('connected');
+      } catch (err) {
+        console.warn('Errore reset scenari Supabase:', err);
+        setDatabaseStatus('error');
+      }
+    }
+  };
+
   const handleSeedMockData = async () => {
     const mockNames = [
       { f: 'Giulia', l: 'Bianchi', email: 'giulia.b@example.it' },
@@ -267,7 +338,7 @@ export default function App() {
     ];
 
     const seeded: PhotoRequest[] = mockNames.map((name, idx) => {
-      const setting = MOVIE_SETTINGS[idx % MOVIE_SETTINGS.length];
+      const setting = settings[idx % settings.length];
       const randomMinutesAgo = Math.floor(Math.random() * 120) + 5;
       const date = new Date(Date.now() - randomMinutesAgo * 60000);
       
@@ -394,7 +465,7 @@ export default function App() {
                   ref={settingsSliderRef}
                   className="flex gap-5 overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth pb-4 px-1"
                 >
-                  {MOVIE_SETTINGS.map((setting) => (
+                  {settings.map((setting) => (
                     <div
                       key={setting.id}
                       className="snap-start shrink-0 w-[82vw] sm:w-[420px] lg:w-[390px]"
@@ -477,6 +548,9 @@ export default function App() {
                 onDeleteRequest={handleDeleteRequest}
                 onClearAllRequests={handleClearAllRequests}
                 onSeedMockData={handleSeedMockData}
+                settings={settings}
+                onUpdateSetting={handleUpdateSetting}
+                onResetSettings={handleResetSettings}
                 autoResetTime={autoResetTime}
                 onUpdateAutoResetTime={setAutoResetTime}
                 automationUrl={automationUrl}

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { PhotoRequest } from '../types';
+import { MovieSetting, PhotoRequest } from '../types';
 
 declare const __SUPABASE_URL__: string;
 declare const __SUPABASE_ANON_KEY__: string;
@@ -38,6 +38,16 @@ type PhotoRequestRow = {
   notes: string | null;
 };
 
+type MovieSettingRow = {
+  id: string;
+  title: string;
+  genre: string;
+  description: string;
+  image_url: string;
+  overlay_label: string;
+  prompt_hint: string;
+};
+
 const toPhotoRequest = (row: PhotoRequestRow): PhotoRequest => ({
   id: row.id,
   firstName: row.first_name,
@@ -62,6 +72,26 @@ const toPhotoRequestRow = (request: PhotoRequest): PhotoRequestRow => ({
   privacy_accepted: request.privacyAccepted,
   status: request.status,
   notes: request.notes || null
+});
+
+const toMovieSetting = (row: MovieSettingRow): MovieSetting => ({
+  id: row.id,
+  title: row.title,
+  genre: row.genre,
+  description: row.description,
+  imageUrl: row.image_url,
+  overlayLabel: row.overlay_label,
+  promptHint: row.prompt_hint
+});
+
+const toMovieSettingRow = (setting: MovieSetting): MovieSettingRow => ({
+  id: setting.id,
+  title: setting.title,
+  genre: setting.genre,
+  description: setting.description,
+  image_url: setting.imageUrl,
+  overlay_label: setting.overlayLabel,
+  prompt_hint: setting.promptHint
 });
 
 export const fetchPhotoRequests = async (): Promise<PhotoRequest[]> => {
@@ -132,6 +162,43 @@ export const clearPhotoRequests = async (): Promise<void> => {
     .from('photo_requests')
     .delete()
     .neq('id', '');
+
+  if (error) throw error;
+};
+
+export const fetchMovieSettings = async (): Promise<MovieSetting[]> => {
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from('movie_settings')
+    .select('*')
+    .order('sort_order', { ascending: true });
+
+  if (error) throw error;
+  return (data as MovieSettingRow[]).map(toMovieSetting);
+};
+
+export const upsertMovieSetting = async (setting: MovieSetting): Promise<void> => {
+  if (!supabase) return;
+
+  const { error } = await supabase
+    .from('movie_settings')
+    .upsert(toMovieSettingRow(setting), { onConflict: 'id' });
+
+  if (error) throw error;
+};
+
+export const replaceMovieSettings = async (settings: MovieSetting[]): Promise<void> => {
+  if (!supabase) return;
+
+  const rows = settings.map((setting, index) => ({
+    ...toMovieSettingRow(setting),
+    sort_order: index
+  }));
+
+  const { error } = await supabase
+    .from('movie_settings')
+    .upsert(rows, { onConflict: 'id' });
 
   if (error) throw error;
 };

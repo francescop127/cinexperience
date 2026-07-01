@@ -62,3 +62,55 @@ on public.photo_requests
 for delete
 to anon
 using (true);
+
+create table if not exists public.movie_settings (
+  id text primary key,
+  title text not null,
+  genre text not null,
+  description text not null,
+  image_url text not null,
+  overlay_label text not null,
+  prompt_hint text not null,
+  sort_order integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists set_movie_settings_updated_at on public.movie_settings;
+
+create trigger set_movie_settings_updated_at
+before update on public.movie_settings
+for each row
+execute function public.set_updated_at();
+
+alter table public.movie_settings enable row level security;
+
+drop policy if exists "Allow public insert movie settings" on public.movie_settings;
+drop policy if exists "Allow public read movie settings" on public.movie_settings;
+drop policy if exists "Allow public update movie settings" on public.movie_settings;
+drop policy if exists "Allow public delete movie settings" on public.movie_settings;
+
+create policy "Allow public insert movie settings"
+on public.movie_settings
+for insert
+to anon
+with check (true);
+
+create policy "Allow public read movie settings"
+on public.movie_settings
+for select
+to anon
+using (true);
+
+create policy "Allow public update movie settings"
+on public.movie_settings
+for update
+to anon
+using (true)
+with check (true);
+
+create policy "Allow public delete movie settings"
+on public.movie_settings
+for delete
+to anon
+using (true);
