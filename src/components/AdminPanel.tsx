@@ -96,6 +96,7 @@ function doPost(e) {
         "Nome",
         "Cognome",
         "Email partecipante",
+        "Profilo Instagram",
         "Scenario richiesto",
         "ID scenario",
         "Genere scenario",
@@ -113,6 +114,7 @@ function doPost(e) {
       data.firstName || "",
       data.lastName || "",
       data.email || "",
+      data.instagramHandle || "",
       data.settingTitle || "",
       data.settingId || "",
       data.settingGenre || "",
@@ -138,6 +140,7 @@ function doPost(e) {
         "DATI PARTECIPANTE",
         "Nome: " + (data.firstName || "") + " " + (data.lastName || ""),
         "Email partecipante: " + (data.email || ""),
+        "Profilo Instagram: " + (data.instagramHandle || "-"),
         "Consenso privacy e social: " + (data.privacyAccepted ? "SI" : "NO"),
         "",
         "SCENARIO DA REALIZZARE",
@@ -170,6 +173,7 @@ function doPost(e) {
       req.firstName.toLowerCase().includes(search.toLowerCase()) ||
       req.lastName.toLowerCase().includes(search.toLowerCase()) ||
       req.email.toLowerCase().includes(search.toLowerCase()) ||
+      (req.instagramHandle || '').toLowerCase().includes(search.toLowerCase()) ||
       req.id.includes(search);
     
     const matchesSetting = selectedSettingFilter === 'all' || req.settingId === selectedSettingFilter;
@@ -203,7 +207,7 @@ function doPost(e) {
     if (requests.length === 0) return;
     
     // Header
-    const headers = ['ID', 'Nome', 'Cognome', 'Email', 'Scenario', 'Data Registrazione', 'Consenso Privacy e Social', 'Stato Lavorazione', 'Note'];
+    const headers = ['ID', 'Nome', 'Cognome', 'Email', 'Profilo Instagram', 'Scenario', 'Data Registrazione', 'Consenso Privacy e Social', 'Stato Lavorazione', 'Note'];
     
     // Rows
     const rows = requests.map(r => [
@@ -211,6 +215,7 @@ function doPost(e) {
       r.firstName,
       r.lastName,
       r.email,
+      r.instagramHandle || '',
       r.settingTitle,
       r.timestamp,
       r.privacyAccepted ? 'Sì' : 'No',
@@ -345,6 +350,7 @@ function doPost(e) {
           firstName: 'Mario',
           lastName: 'Rossi',
           email: 'mario.rossi@test.it',
+          instagramHandle: '@mariorossi',
           settingId: 'test',
           settingTitle: 'Scenario test CINÉXPERIENCE',
           settingGenre: 'Test operativo',
@@ -473,7 +479,7 @@ function doPost(e) {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
               <input
                 type="text"
-                placeholder="Cerca per nome, email o ID..."
+                placeholder="Cerca per nome, email, Instagram o ID..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-none py-2.5 pl-10 pr-4 text-xs text-white placeholder-white/20 focus:outline-none focus:border-white/30"
@@ -547,6 +553,9 @@ function doPost(e) {
                             <span>{req.lastName} {req.firstName}</span>
                           </div>
                           <span className="text-white/40 font-mono text-[11px] block mt-0.5">{req.email}</span>
+                          {req.instagramHandle && (
+                            <span className="text-white/45 font-mono text-[11px] block mt-0.5">{req.instagramHandle}</span>
+                          )}
                           <span className="text-[10px] text-white/30 block mt-1 font-mono">
                             {req.timestamp}
                           </span>

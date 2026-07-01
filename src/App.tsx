@@ -152,7 +152,7 @@ export default function App() {
   };
 
   // Handle request submission
-  const handleSubmitForm = async (formData: { firstName: string; lastName: string; email: string; notes?: string }) => {
+  const handleSubmitForm = async (formData: { firstName: string; lastName: string; email: string; instagramHandle?: string; notes?: string }) => {
     if (!selectedSetting) return;
     setIsSubmitting(true);
 
@@ -161,6 +161,7 @@ export default function App() {
       firstName: formData.firstName,
       lastName: formData.lastName,
       email: formData.email,
+      instagramHandle: formData.instagramHandle,
       settingId: selectedSetting.id,
       settingTitle: selectedSetting.title,
       timestamp: new Date().toLocaleString('it-IT', {
@@ -339,11 +340,11 @@ export default function App() {
 
   const handleSeedMockData = async () => {
     const mockNames = [
-      { f: 'Giulia', l: 'Bianchi', email: 'giulia.b@example.it' },
-      { f: 'Marco', l: 'Neri', email: 'm.neri@esempio.com' },
-      { f: 'Francesca', l: 'Rossi', email: 'franci.rossi@test.it' },
-      { f: 'Alessandro', l: 'Verdi', email: 'ale.verdi@posta.it' },
-      { f: 'Elena', l: 'Ferrari', email: 'elena.ferrari@dominio.it' }
+      { f: 'Giulia', l: 'Bianchi', email: 'giulia.b@example.it', instagram: '@giulia.bianchi' },
+      { f: 'Marco', l: 'Neri', email: 'm.neri@esempio.com', instagram: '@marconeri' },
+      { f: 'Francesca', l: 'Rossi', email: 'franci.rossi@test.it', instagram: '@francirossi' },
+      { f: 'Alessandro', l: 'Verdi', email: 'ale.verdi@posta.it', instagram: '@ale.verdi' },
+      { f: 'Elena', l: 'Ferrari', email: 'elena.ferrari@dominio.it', instagram: '@elenaferrari' }
     ];
 
     const seeded: PhotoRequest[] = mockNames.map((name, idx) => {
@@ -359,6 +360,7 @@ export default function App() {
         firstName: name.f,
         lastName: name.l,
         email: name.email,
+        instagramHandle: name.instagram,
         settingId: setting.id,
         settingTitle: setting.title,
         timestamp: date.toLocaleString('it-IT'),

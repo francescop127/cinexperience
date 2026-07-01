@@ -3,6 +3,7 @@ create table if not exists public.photo_requests (
   first_name text not null,
   last_name text not null,
   email text not null,
+  instagram_handle text,
   setting_id text not null,
   setting_title text not null,
   timestamp text not null,
@@ -13,6 +14,9 @@ create table if not exists public.photo_requests (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.photo_requests
+add column if not exists instagram_handle text;
 
 create or replace function public.set_updated_at()
 returns trigger

@@ -30,6 +30,7 @@ type PhotoRequestRow = {
   first_name: string;
   last_name: string;
   email: string;
+  instagram_handle: string | null;
   setting_id: string;
   setting_title: string;
   timestamp: string;
@@ -53,6 +54,7 @@ const toPhotoRequest = (row: PhotoRequestRow): PhotoRequest => ({
   firstName: row.first_name,
   lastName: row.last_name,
   email: row.email,
+  instagramHandle: row.instagram_handle || undefined,
   settingId: row.setting_id,
   settingTitle: row.setting_title,
   timestamp: row.timestamp,
@@ -66,6 +68,7 @@ const toPhotoRequestRow = (request: PhotoRequest): PhotoRequestRow => ({
   first_name: request.firstName,
   last_name: request.lastName,
   email: request.email,
+  instagram_handle: request.instagramHandle || null,
   setting_id: request.settingId,
   setting_title: request.settingTitle,
   timestamp: request.timestamp,

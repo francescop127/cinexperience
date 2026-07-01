@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { MovieSetting } from '../types';
-import { Mail, User, ShieldCheck, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Mail, User, ShieldCheck, ArrowRight, ArrowLeft, Instagram } from 'lucide-react';
 
 interface RegistrationFormProps {
   selectedSetting: MovieSetting;
-  onSubmit: (formData: { firstName: string; lastName: string; email: string; notes?: string }) => void;
+  onSubmit: (formData: { firstName: string; lastName: string; email: string; instagramHandle?: string; notes?: string }) => void;
   onBack: () => void;
   isSubmitting: boolean;
 }
@@ -18,6 +18,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [instagramHandle, setInstagramHandle] = useState('');
   const [notes, setNotes] = useState('');
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -45,7 +46,13 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit({ firstName, lastName, email, notes: notes.trim() || undefined });
+      onSubmit({
+        firstName,
+        lastName,
+        email,
+        instagramHandle: instagramHandle.trim() || undefined,
+        notes: notes.trim() || undefined
+      });
     }
   };
 
@@ -195,6 +202,24 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({
           {errors.email && (
             <p className="text-[10px] text-red-400 font-semibold mt-0.5 uppercase tracking-wider">{errors.email}</p>
           )}
+        </div>
+
+        {/* Input Instagram */}
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="instagramHandle" className="text-[10px] uppercase tracking-widest text-white/50 ml-1">
+            Profilo Instagram <span className="text-white/25">(opzionale)</span>
+          </label>
+          <div className="relative">
+            <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+            <input
+              type="text"
+              id="instagramHandle"
+              placeholder="@nomeprofilo"
+              value={instagramHandle}
+              onChange={(e) => setInstagramHandle(e.target.value)}
+              className="block w-full bg-white/10 border-none pl-11 pr-4 py-4 focus:ring-1 focus:ring-white/40 outline-none placeholder:text-white/20 text-sm transition-all rounded-none"
+            />
+          </div>
         </div>
 
         {/* Note operative opzionali */}

@@ -15,6 +15,7 @@ export interface PhotoRequest {
   firstName: string;
   lastName: string;
   email: string;
+  instagramHandle?: string;
   settingId: string;
   settingTitle: string;
   timestamp: string;
