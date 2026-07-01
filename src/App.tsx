@@ -23,6 +23,12 @@ import {
 const defaultAutomationUrl = import.meta.env.VITE_AUTOMATION_URL || 'https://script.google.com/macros/s/AKfycbzRKjgSdEX9ppVtZI7eqnN9vbaab8JCpAGyttHWoZVoOCiU8v1azI8lWuXA4il--kQ/exec';
 const defaultNotificationEmail = import.meta.env.VITE_NOTIFICATION_EMAIL || 'cinexperience26@gmail.com';
 const defaultSettingIds = new Set(MOVIE_SETTINGS.map((setting) => setting.id));
+const videoReferences = [
+  { src: '/M_EMA.mp4', label: 'Reference 01' },
+  { src: '/RIF_FRA.mp4', label: 'Reference 02' },
+  { src: '/S_GIA.mp4', label: 'Reference 03' },
+  { src: '/TD_NIC.mp4', label: 'Reference 04' }
+];
 
 const hasCurrentDefaultCatalog = (settings: MovieSetting[]) => {
   return settings.length === MOVIE_SETTINGS.length && settings.every((setting) => defaultSettingIds.has(setting.id));
@@ -458,6 +464,48 @@ export default function App() {
                   Mettiti in posa davanti al Green Screen e verrai proiettato in una locandina cinematografica personalizzata
                 </p>
               </div>
+
+              {/* Gallery Video Reference */}
+              <section className="flex flex-col gap-3">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <span className="text-[10px] text-white/40 uppercase tracking-[0.3em] font-semibold">
+                      Video Reference
+                    </span>
+                    <h2 className="text-lg sm:text-xl font-light text-white uppercase tracking-wider mt-1">
+                      Il servizio in loop
+                    </h2>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-2 text-[9px] font-mono text-white/35 uppercase tracking-widest">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                    <span>Auto play</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-flow-col auto-cols-[72vw] sm:auto-cols-[42vw] lg:grid-flow-row lg:grid-cols-4 lg:auto-cols-auto gap-3 overflow-x-auto overscroll-x-contain snap-x snap-mandatory pb-2">
+                  {videoReferences.map((video) => (
+                    <div
+                      key={video.src}
+                      className="relative aspect-[9/16] max-h-[520px] overflow-hidden border border-white/10 bg-black snap-start group"
+                    >
+                      <video
+                        src={video.src}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        aria-label={video.label}
+                      />
+                      <div className="pointer-events-none absolute inset-0 border border-white/5" />
+                      <div className="pointer-events-none absolute left-2 top-2 bg-black/70 px-2 py-1 text-[9px] font-mono uppercase tracking-widest text-white/70">
+                        {video.label}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
 
               {/* Slider Scenari */}
               <div className="relative">
